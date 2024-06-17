@@ -16,10 +16,10 @@ CACHE STRING "Name suffix for debug builds")
 set(SDL2_DIR "C:/Program Files/vcpkg/packages/sdl2_x64-windows/share/sdl2")
 find_package(SDL2 REQUIRED)
 
-set(glm_DIR "C:/Program Files/vcpkg/packages/glm_x86-windows/share/glm")
-find_package(glm REQUIRED)
+set(glm_DIR "C:/Program Files/vcpkg/packages/glm_x64-windows/share/glm")
+find_package(glm CONFIG REQUIRED)
 
-find_package(OpenMP)
+find_package(OpenMP REQUIRED)
 
 add_executable(RayTracingTest main.cpp ray_tracing_lib.cpp ray_tracing_lib.h)
 target_link_libraries(RayTracingTest PRIVATE SDL2::SDL2 SDL2::SDL2main glm::glm OpenMP::OpenMP_CXX)

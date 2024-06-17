@@ -143,21 +143,66 @@ int main() {
 
     Scene scene;
 
-    RayTracingMaterial firstMat  { vec3(1, 1, 1), vec3(0), 0, 0.3f, 1.0f };
-    RayTracingMaterial secondMat { vec3(1, 1, 1), vec3(0), 0, 0.6f, 1.0f };
-    RayTracingMaterial thirdMat  { vec3(1, 1, 1), vec3(0), 0, 1.0f, 1.0f };
+    // RayTracingMaterial firstMat  { vec3(1, 1, 1), vec3(0), 0, 0.3f, 1.0f };
+    // RayTracingMaterial secondMat { vec3(1, 1, 1), vec3(0), 0, 0.6f, 1.0f };
+    // RayTracingMaterial thirdMat  { vec3(1, 1, 1), vec3(0), 0, 1.0f, 1.0f };
 
-    RayTracingMaterial yellowMat    { vec3(1.0f, 0.5f, 0.1f), vec3(1.0f, 0.5f, 0.1f), 0.0f, 0.0f, 0.0f };
-    RayTracingMaterial emissiveMat  { vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f), 3.0f, 0.0f, 0.0f };
+    // RayTracingMaterial yellowMat    { vec3(1.0f, 0.5f, 0.1f), vec3(1.0f, 0.5f, 0.1f), 0.0f, 0.0f, 0.0f };
+    // RayTracingMaterial emissiveMat  { vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f), 3.0f, 0.0f, 0.0f };
 
-    scene.objects.emplace_back(new Sphere { vec3(5, 3, 0), 1.f, firstMat });
-    scene.objects.emplace_back(new Sphere { vec3(5, 0, 0), 1.f, secondMat });
-    scene.objects.emplace_back(new Sphere { vec3(5, -3, 0), 1.f, thirdMat });
+    // scene.objects.emplace_back(new Sphere { vec3(5, 3, 0), 1.f, firstMat });
+    // scene.objects.emplace_back(new Sphere { vec3(5, 0, 0), 1.f, secondMat });
+    // scene.objects.emplace_back(new Sphere { vec3(5, -3, 0), 1.f, thirdMat });
+
+    // cornell box
+    const float cornellBoxSize = 1.f;
+    const float cornellCoord = cornellBoxSize / 2.f;
+    {
+        vec3 backTL{ cornellCoord, -cornellCoord, -cornellCoord };
+        vec3 backTR{ cornellCoord, cornellCoord, -cornellCoord };
+        vec3 backBL{ cornellCoord, -cornellCoord, cornellCoord };
+        vec3 backBR{ cornellCoord, cornellCoord, cornellCoord };
+
+        vec3 frontTL{ -cornellCoord, -cornellCoord, -cornellCoord };
+        vec3 frontTR{ -cornellCoord, cornellCoord, -cornellCoord };
+        vec3 frontBL{ -cornellCoord, -cornellCoord, cornellCoord };
+        vec3 frontBR{ -cornellCoord, cornellCoord, cornellCoord };
+
+        vec3 zeroV{ 1.f, 0.f, 0.f };
+
+        RayTracingMaterial greenMat        { vec3(0.f, 1.f, 0.f), vec3(1.f, 1.f, 1.f), 0.0f, 0.0f, 0.0f };
+        RayTracingMaterial redMat          { vec3(1.f, 0.f, 0.f), vec3(1.f, 1.f, 1.f), 0.0f, 0.0f, 0.0f };
+        RayTracingMaterial whiteMat        { vec3(1.f, 1.f, 1.f), vec3(0.f, 0.f, 0.f), 0.0f, 0.0f, 0.0f };
+        RayTracingMaterial glowingWhiteMat { vec3(1.f, 1.f, 1.f), vec3(1.f, 1.f, 1.f), 3.0f, 0.0f, 0.0f };
+
+        // left side
+        scene.objects.emplace_back(new Triangle { zeroV, backTL, backBL, frontBL, greenMat });
+        scene.objects.emplace_back(new Triangle { zeroV, backTL, frontBL, frontTL, greenMat });
+
+        // right side
+        scene.objects.emplace_back(new Triangle { zeroV, backTR, backBR, frontBR, redMat });
+        scene.objects.emplace_back(new Triangle { zeroV, backTR, frontBR, frontTR, redMat });
+
+        // back side
+        scene.objects.emplace_back(new Triangle { zeroV, backBL, backTL, backTR, whiteMat });
+        scene.objects.emplace_back(new Triangle { zeroV, backBL, backBR, backTR, whiteMat });
+
+        // bottom side
+        scene.objects.emplace_back(new Triangle { zeroV, backBL, backBR, frontBL, whiteMat });
+        scene.objects.emplace_back(new Triangle { zeroV, frontBL, frontBR, backBR, whiteMat });
+
+        // top side
+        scene.objects.emplace_back(new Triangle { zeroV, backTL, backTR, frontTL, glowingWhiteMat });
+        scene.objects.emplace_back(new Triangle { zeroV, frontTL, frontTR, backTR, glowingWhiteMat });
+
+        // sphere
+        scene.objects.emplace_back(new Sphere { zeroV, .3f, RayTracingMaterial{ vec3(1.f, 1.f, 1.f), vec3(1.f, 1.f, 1.f), 0.f, 0.4f, 8.f } });
+    }
 
     // scene.objects.emplace_back(new Sphere { vec3(5, 0, 55), 50.f, yellowMat });
 
     // scene.objects.emplace_back(new Triangle {vec3(5, 0, -1), vec3(0, 0, 0), vec3(3, -4, 3), vec3(3, 4, 3), secondMat });
-    scene.objects.emplace_back(new Sphere { vec3(5, 0, -8), 5.f, emissiveMat });
+    // scene.objects.emplace_back(new Sphere { vec3(5, 0, -8), 5.f, emissiveMat });
 
     clear_frame(surface, canvas, pixels[0]);
     clear_frame(surface, canvas, pixels[1]);
